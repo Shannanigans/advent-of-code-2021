@@ -1,4 +1,4 @@
-from functools import reduce, partial
+from functools import reduce
 
 
 def get_data(filename="day-1-data.txt"):
@@ -28,22 +28,32 @@ get_part_one_result = lambda file_path: reduce(
 
 # PART 2
 
+# left to right
+def compose(*functions):
+    def __compose(initial_value):
+        return reduce(lambda result, value: value(result), functions, initial_value)
+
+    return __compose
+
 
 def toInt(iterable):
     for x in iterable:
         yield int(x)
 
 
-def take(iterable, take_num):
-    take_list = []
-    for x in iterable:
-        # add
-        take_list = [x] + take_list
-        # remove
-        take_list = take_list[0:take_num]
-        # yield if full
-        if len(take_list) == take_num:
-            yield take_list
+def take(take_num):
+    def __take(iterable):
+        take_list = []
+        for x in iterable:
+            # add
+            take_list = [x] + take_list
+            # remove
+            take_list = take_list[0:take_num]
+            # yield if full
+            if len(take_list) == take_num:
+                yield take_list
+
+    return __take
 
 
 def isSumIncrease(slide_num, values):
@@ -57,7 +67,7 @@ def process_part_two(slide_num, file_path):
         lambda result, values: result + 1
         if isSumIncrease(slide_num, values)
         else result,
-        take(toInt(get_data(file_path)), slide_num),
+        compose(get_data, toInt, take(4))(file_path),
         0,
     )
 
