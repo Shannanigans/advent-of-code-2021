@@ -29,33 +29,38 @@ get_part_one_result = lambda file_path: reduce(
 # PART 2
 
 
-def process_part_two(slide_num, result, value):
-    # Convert value from string
-    numeric_value = int(value)
-
-    # Append newest value
-    result["previous"] = [numeric_value] + result["previous"]
-
-    if len(result["previous"]) == slide_num + 1:
-
-        # Determine window sums
-        previous_sum = sum(result["previous"][0:slide_num])
-        current_sum = sum(result["previous"][1 : slide_num + 1])
-
-        # Increase count if increased
-        if is_increase(previous_sum, current_sum):
-            result["count"] = result["count"] + 1
-
-        # Pop oldest value
-        result["previous"] = result["previous"][0 : len(result["previous"]) - 1]
-
-    return result
+def toInt(iterable):
+    for x in iterable:
+        yield int(x)
 
 
-get_part_two_result = lambda file_path: reduce(
-    partial(process_part_two, 3), get_data(file_path), {"count": 0, "previous": []}
-)
+def take(iterable, take_num):
+    take_list = []
+    for x in iterable:
+        # add
+        take_list = [x] + take_list
+        # remove
+        take_list = take_list[0:take_num]
+        # yield if full
+        if len(take_list) == take_num:
+            yield take_list
 
 
-# print(get_part_two_result("day-1-test-data.txt"))
-print(get_part_two_result("day-1-data.txt"))
+def isSumIncrease(slide_num, values):
+    previous_sum = sum(values[0 : slide_num - 1])
+    current_sum = sum(values[1:slide_num])
+    return is_increase(previous_sum, current_sum)
+
+
+def process_part_two(slide_num, file_path):
+    return reduce(
+        lambda result, values: result + 1
+        if isSumIncrease(slide_num, values)
+        else result,
+        take(toInt(get_data(file_path)), slide_num),
+        0,
+    )
+
+
+print(process_part_two(4, "day-1-test-data.txt"))
+print(process_part_two(4, "day-1-data.txt"))
