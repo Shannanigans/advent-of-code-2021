@@ -39,3 +39,9 @@ def compose(*functions):
 
     return __compose
 
+
+def bin_to_decimal(binary):
+    number = 0
+    for b in binary:
+        number = (2 * number) + int(b)
+    return number
