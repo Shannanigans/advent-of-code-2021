@@ -6,15 +6,6 @@ def get_data(filename):
         yield line.strip()
 
 
-def compose(*functions):
-    def __compose(initial_value):
-        return reduce(
-            lambda result, value: value(result), functions[::-1], initial_value
-        )
-
-    return __compose
-
-
 def to_int(iterable):
     for x in iterable:
         yield int(x)
@@ -38,3 +29,13 @@ def take(take_num):
                 yield take_list
 
     return __take
+
+
+def compose(*functions):
+    def __compose(initial_value):
+        return reduce(
+            lambda result, value: value(result), functions[::-1], initial_value
+        )
+
+    return __compose
+
