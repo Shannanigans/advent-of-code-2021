@@ -15,14 +15,30 @@ def most(bit_position, counts):
 modes = {"least": least, "most": most}
 
 
+def iter_count(iterator):
+    first_it, second_it = tee(iterator)
+    return sum(1 for _ in second_it), first_it
+
+
+def filter_by_digit(iterator, digit, bit_position):
+    return filter(lambda x: int(x[bit_position]) == digit, iterator)
+
+
+def find_digit(iterator, mode, bit_position):
+    counts = reduce(count_ones, iterator, get_initial_state())
+    digit = modes[mode](bit_position, counts)
+    return digit
+
+
+def found(count):
+    return count == 1
+
+
 def dig(iterator, mode, bit_position=0):
     first_it, second_it = tee(iterator)
-    counts = reduce(count_ones, first_it, get_initial_state())
-    digit = modes[mode](bit_position, counts)
-    sub_set = list(filter(lambda x: int(x[bit_position]) == digit, second_it))
-    return (
-        sub_set[0] if len(sub_set) == 1 else dig(iter(sub_set), mode, bit_position + 1)
-    )
+    digit = find_digit(first_it, mode, bit_position)
+    count, sub_set = iter_count(filter_by_digit(second_it, digit, bit_position))
+    return next(sub_set) if found(count) else dig(sub_set, mode, bit_position + 1)
 
 
 def answer(filename):
