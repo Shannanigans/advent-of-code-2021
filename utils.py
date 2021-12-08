@@ -1,4 +1,6 @@
 from functools import reduce
+from itertools import tee
+from collections import Counter
 
 
 def get_data(filename):
@@ -31,6 +33,23 @@ def take(take_num):
     return __take
 
 
+def group_while(predicate):
+    def __group_while(iterable):
+        take_list = []
+        for x in iterable:
+            take_list = [x] + take_list if predicate(x) else take_list
+            if not predicate(x) and len(take_list) > 0:
+                yield take_list
+                take_list = []
+
+    return __group_while
+
+
+def iter_count(iterator):
+    first_it, second_it = tee(iterator)
+    return sum(1 for _ in second_it), first_it
+
+
 def compose(*functions):
     def __compose(initial_value):
         return reduce(
@@ -45,3 +64,19 @@ def bin_to_decimal(binary):
     for b in binary:
         number = (2 * number) + int(b)
     return number
+
+
+def peak_reduce(func):
+    def _peak(result, value):
+        print(value)
+        return func(result, value)
+
+    return _peak
+
+
+def get_diff_with_dups(list_one, list_two):
+    return list((Counter(list_one) - Counter(list_two)).elements())
+
+
+def list_remove_by_index(m, index):
+    return m[:index] + m[index + 1 :]

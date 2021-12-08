@@ -1,5 +1,5 @@
 from functools import reduce
-from utils import get_data, bin_to_decimal
+from utils import get_data, bin_to_decimal, iter_count
 from day_3_part_1 import count_ones, get_initial_state
 from itertools import tee
 
@@ -13,11 +13,6 @@ def most(bit_position, counts):
 
 
 modes = {"least": least, "most": most}
-
-
-def iter_count(iterator):
-    first_it, second_it = tee(iterator)
-    return sum(1 for _ in second_it), first_it
 
 
 def filter_by_digit(iterator, digit, bit_position):
