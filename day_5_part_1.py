@@ -72,15 +72,20 @@ def calc_distance(coordinate_pair):
     return int(c)
 
 
+def resolve_index(steps, step_index):
+    return 0 if len(steps) == 1 else step_index
+
+
 def mark_map(result, value):
     distance = calc_distance(value)
     x_steps = [*get_index_range(value, y_co)]
     y_steps = [*get_index_range(value, x_co)]
 
     for step_index in range(distance + 1):
-        x_resolved_index = 0 if len(x_steps) == 1 else step_index
-        y_resolved_index = 0 if len(y_steps) == 1 else step_index
-        step = (x_steps[x_resolved_index], y_steps[y_resolved_index])
+        step = (
+            x_steps[resolve_index(x_steps, step_index)],
+            y_steps[resolve_index(y_steps, step_index)],
+        )
         map_value = result[step[x_co]][step[y_co]]
         result[step[x_co]][step[y_co]] = map_mark_handler(map_value)
 
