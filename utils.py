@@ -59,6 +59,10 @@ def compose(*functions):
     return __compose
 
 
+def clamp(number, lower, upper):
+    return max(lower, min(number, upper))
+
+
 def bin_to_decimal(binary):
     number = 0
     for b in binary:
