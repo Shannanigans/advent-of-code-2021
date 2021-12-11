@@ -1,4 +1,4 @@
-from utils import get_data, split, compose, clamp
+from utils import get_data, split, compose, clamp, peak_compose
 from functools import reduce
 
 x_co = 0
@@ -92,8 +92,11 @@ def mark_map(result, value):
     return result
 
 
-def process(iterable, map_diagram):
-    return reduce(mark_map, iterable, map_diagram)
+def process(map_diagram):
+    def __process(iterable):
+        return reduce(mark_map, iterable, map_diagram)
+
+    return __process
 
 
 def print_map_diagram(map_diagram):
@@ -118,20 +121,14 @@ def count_map(map_diagram):
 
 
 def main():
-    print(
-        count_map(
-            process(
-                compose(
-                    get_horizontal_vertical_iter,
-                    get_coordinates_iter,
-                    get_data,
-                )("day_5_data.txt"),
-                # )("day_5_test_data.txt"),
-                get_initial_map(1000, 1000),
-                # get_initial_map(10, 10),
-            )
-        )
-    )
+    compose(
+        peak_compose(lambda x: print("Answer: ", x)),
+        count_map,
+        process(get_initial_map(1000, 1000)),
+        get_horizontal_vertical_iter,
+        get_coordinates_iter,
+        get_data,
+    )("day_5_data.txt"),
 
 
 if __name__ == "__main__":

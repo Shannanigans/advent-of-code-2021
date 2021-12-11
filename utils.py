@@ -8,6 +8,12 @@ def get_data(filename):
         yield line.strip()
 
 
+def per_char(iterable):
+    for line in iterable:
+        for char in line:
+            yield char
+
+
 def to_int(iterable):
     for x in iterable:
         yield int(x)
@@ -45,8 +51,17 @@ def group_while(predicate):
     return __group_while
 
 
-def iter_count(iterator):
-    first_it, second_it = tee(iterator)
+def iter_filter(predicate):
+    def __iter_filter(iterable):
+        for x in iterable:
+            if predicate(x):
+                yield x
+
+    return __iter_filter
+
+
+def iter_count(iterable):
+    first_it, second_it = tee(iterable)
     return sum(1 for _ in second_it), first_it
 
 
@@ -76,6 +91,14 @@ def peak_reduce(func):
         return func(result, value)
 
     return _peak
+
+
+def peak_compose(func):
+    def __peak_compose(value):
+        func(value)
+        return value
+
+    return __peak_compose
 
 
 def get_diff_with_dups(list_one, list_two):
